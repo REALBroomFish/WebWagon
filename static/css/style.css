@@ -425,7 +425,6 @@ padding: 20px 20px;
   display: none;
   padding: 20px;
   text-align: center;
-  grid-template-rows: 1fr 5fr;
 }
 .address-box > h2, .alt-address-box > h2 {
   font-size: 24px;
