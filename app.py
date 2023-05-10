@@ -204,6 +204,6 @@ def product_view():
         return render_template("item.html", item_info = product, address=address, isAddress = session.get("isAddress", False), advert_image=advert)
 
 if __name__ == "__main__":
-    adverts = ["CCAdvertisement.jpg"]
+    adverts = ["CCAdvertisement.jpg", "Alt-advert.png"]
     with app.app_context():
         app.run(debug=True)
