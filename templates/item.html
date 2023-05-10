@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block stylesheet %}
+<title>{{item_info.name}}</title>
+<link rel="stylesheet" type="text/css" href="/static/css/item.css">
+{% endblock %}
+
+{% block content %}
+<div class="product-grid-container">
+    <div class="product-item-content">
+        <div class="product-item-image">
+            <img src="/static/images/{{item_info.image}}">
+        </div>
+        <div class="product-details">
+            <div class="product-name">{{item_info.name}}</div>
+            <div class="product-price">{{item_info.price}}</div>
+        </div>
+        <div class="product-info">
+            <div class="product-deliveryTime">{{item_info.collection}} 
+                {% if item_info.delivery_fee != 0.0 %}
+                    <span class="delivery-fee">Delivery: £{{item_info.delivery_fee}}</span>
+                {% endif %}            
+                <a class="search-item-EnvImp" href="{{url_for('environmental_impact_info')}}">
+                    Environmental Impact: {{item_info.environmental_impact}}
+                </a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

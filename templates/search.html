@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+{% block stylesheet %}
+<title>Search {{search_query}}</title>
+<link rel="stylesheet" type="text/css" href="/static/css/search.css"/>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+{% endblock %}
+{% block content %}
+<div class="search-all-items">
+    {% if not_enough_items[0] %}
+        {% for pos in range(0, not_enough_items[1]) %}
+            <div class="search-item-container">
+                <div class="search-item-image">
+                    <img src="/static/images/{{item_info[pos].image}}">
+                </div>
+                <div class="search-item-info"> 
+                    <span class="search-item-info-header">
+                        <a class="search-item-name" href="{{url_for('product_view')}}?item_id={{item_info[pos].id}}" >
+                            {{item_info[pos].name}}
+                        </a>
+                    </span>
+                    <div class="search-item-details">
+                        <div class="search-item-price">£{{item_info[pos].price}}</div>
+                    </div>
+                    <div>
+                        {% if item_info[pos].deal %}
+                        <div class="search-item-deal">{{item_info[pos].deal}}</div>
+                        {% endif %}
+
+                        <a class="search-item-EnvImp" href="{{url_for('environmental_impact_info')}}">
+                            Environmental Impact: {{item_info[pos].environmental_impact}}
+                        </a>
+                        <div class="search-item-deliveryTime">
+                            {% if item_info[pos].delivery_fee != 0.0 %}
+                                £{{item_info[pos].delivery_fee}}
+                            {% endif %} {{item_info[pos].collection}}
+                        </div>
+                    </div>
+                </div>
+                <form action="{{url_for('cart')}}"method="post">
+                    <button type="submit" name="add-to-basket" value="{{item_info[pos].id}},{{item_info[pos].price}},{{item_info[pos].delivery_fee}}"> 
+                        Add to Basket 
+                    </button>
+                </form>
+            </div>
+        {% endfor %}
+        <div style="padding: 10px;">
+            There weren't {{no_items}} items to show. Here are some suggestions:
+        </div>
+        {% for pos in range(0, no_additional_items) %}
+            <div class="search-item-container">
+                <div class="search-item-image">
+                    <img src="/static/images/{{additional_items[pos].image}}">
+                </div>
+                <div class="search-item-info"> 
+                    <span class="search-item-info-header">
+                        <a class="search-item-name" href="{{url_for('product_view')}}?item_id={{additional_items[pos].id}}" >
+                            {{additional_items[pos].name}}
+                        </a>
+                    </span>
+                    <div class="search-item-details">
+                        <div class="search-item-price">£{{additional_items[pos].price}}</div>
+                    </div>
+                    <div>
+                        {% if additional_items[pos].deal %}
+                        <div class="search-item-deal">{{additional_items[pos].deal}}</div>
+                        {% endif %}
+
+                        <a class="search-item-EnvImp" href="{{url_for('environmental_impact_info')}}">
+                            Environmental Impact: {{additional_items[pos].environmental_impact}}
+                        </a>
+                        <div class="search-item-deliveryTime">
+                            {% if additional_items[pos].delivery_fee != 0.0 %}
+                                £{{additional_items[pos].delivery_fee}}
+                            {% endif %} {{additional_items[pos].collection}}
+                        </div>
+                    </div>
+                </div>
+                <form action="{{url_for('cart')}}"method="post">
+                    <button type="submit" name="add-to-basket" value="{{additional_items[pos].id}},{{additional_items[pos].price}},{{additional_items[pos].delivery_fee}}"> 
+                        Add to Basket 
+                    </button>
+                </form>
+            </div>
+        {% endfor %}
+    {% else %}
+        {% for pos in range(0, no_items-1) %}
+            <div class="search-item-container">
+                <div class="search-item-image">
+                    <img src="/static/images/{{item_info[pos].image}}">
+                </div>
+                <div class="search-item-info"> 
+                    <span class="search-item-info-header">
+                        <a class="search-item-name" href="{{url_for('product_view')}}?item_id={{item_info[pos].id}}" >
+                            {{item_info[pos].name}}
+                        </a>
+                    </span>
+                    <div class="search-item-details">
+                        <div class="search-item-price">£{{item_info[pos].price}}</div>
+                    </div>
+                    <div>
+                        {% if item_info[pos].deal %}
+                        <div class="search-item-deal">{{item_info[pos].deal}}</div>
+                        {% endif %}
+
+                        <a class="search-item-EnvImp" href="{{url_for('environmental_impact_info')}}">
+                            Environmental Impact: {{item_info[pos].environmental_impact}}
+                        </a>
+                        <div class="search-item-deliveryTime">
+                            {% if item_info[pos].delivery_fee != 0.0 %}
+                                £{{item_info[pos].delivery_fee}}
+                            {% endif %} {{item_info[pos].collection}}
+                        </div>
+                    </div>
+                </div>
+                <form action="{{url_for('cart')}}"method="post">
+                    <button type="submit" name="add-to-basket" value="{{item_info[pos].id}},{{item_info[pos].price}},{{item_info[pos].delivery_fee}}"> 
+                        Add to Basket 
+                    </button>
+                </form>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+</div>
+
+{% endblock %}

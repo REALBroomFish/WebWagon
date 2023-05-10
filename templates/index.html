@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block content %}
+<hero class="hero-background">
+    <img src="/static/images/hero-image.png">
+</hero>
+<div class="main-title">WebWagon</div>
+<div class="main-subtitle">Designed by Connor Jones</div>
+<div class="grid-container">
+    {% for pos in range(0, no_items-1)%}
+    <div class="indiv-item">
+        <div class="item-image">
+            <a class="search-item-name" href="{{url_for('product_view')}}?item_id={{item_info[pos].id}}" >  
+                <img src="/static/images/{{item_info[pos].image}}">
+            </a>
+
+        </div>
+        <div class="item-info"> 
+            <span class="item-info-header">
+                <span class="search-item-info-header">
+                    <a class="search-item-name" href="{{url_for('product_view')}}?item_id={{item_info[pos].id}}" >
+                        {{item_info[pos].name}}
+                    </a>
+                </span>
+            </span>
+        </div>
+        <div class="item-details">
+            <div class="item-price">£{{item_info[pos].price}}</div>
+            <span>
+                {% if item_info[pos].deal %}
+                <div class="item-deal">{{item_info[pos].deal}}</div>
+                {% endif %}
+                <a class="search-item-EnvImp" href="{{url_for('environmental_impact_info')}}">
+                    Environmental Impact: {{item_info[pos].environmental_impact}}
+                </a>                
+                <div class="item-deliveryTime">
+                    {% if item_info[pos].delivery_fee != 0.0 %}
+                        £{{item_info[pos].delivery_fee}}
+                    {% endif %} 
+                    {{item_info[pos].collection}}
+                </div>
+            </span>
+        </div>
+        <form method="post">
+            <button type="submit" name="add-to-basket" value="{{item_info[pos].id}}"> Add to Basket </button>
+        </form>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

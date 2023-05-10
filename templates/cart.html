@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block stylesheet %}
+<title>Cart</title>
+<link rel="stylesheet" type="text/css" href="/static/css/cart.css"/>
+{% endblock %}
+{% block content %}
+<div class="cart-grid-container">
+    <div class="cart-main-basket">
+        <div class="cart-header">
+            <div class="cart-title">Shopping cart</div>
+            <div class="cart-price">Price</div>
+        </div>
+        <div class="cart-item-container">
+            {% if cart_items == None %}
+                <div class="no-item-image">
+                    <img src="itemsnotfound.png">
+                </div>
+                <span class="no-items-text">
+                    Shopping cart is empty...
+                </span>      
+            {% else %}
+                {% for pos in range(0, no_items)%}
+                    <div class="cart-indiv-item">
+                        <div class="cart-item-image">
+                            <img src="/static/images/{{cart_items[pos].image}}">
+                        </div>
+                        <div class="cart-item-wrapper">
+                            <a class="cart-title" href="{{url_for('product_view')}}?item_id={{cart_items[pos].id}}" >
+                                {{cart_items[pos].name}}
+                            </a>
+                            <div class="cart-item-price">£{{cart_items[pos].price}}</div>
+                        </div>
+                        <div class="cart-item-wrapper">
+                            <div class="cart-item-deliveryTime">{{cart_items[pos].collection}} 
+                            {% if cart_items[pos].delivery_fee != 0.0 %}
+                                <span class="delivery-fee">Delivery: £{{cart_items[pos].delivery_fee}}</span>
+                            {% endif %}
+                            </div>
+                            <a class="search-item-EnvImp" href="{{url_for('environmental_impact_info')}}">
+                                Environmental Impact: {{cart_items[pos].environmental_impact}}
+                            </a>
+                        </div>
+                        <div class="cart-item-wrapper">
+                            <form method="post">
+                                <div>
+                                    Number of this item:
+                                    <select name="quantity" id="quantity">
+                                        {% for i in range(1, 100) %}
+                                            <option value="{{i}}" {% if numberof[cart_items[pos].id|string] == i %} selected {% endif %}>
+                                                {{i}}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div>
+                                    <button type="submit" name="update-quantity" value="{{cart_items[pos].id}}">Update quantity</button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="cart-item-wrapper" style="border-bottom: none;">
+                            <form method="post">
+                                <button type="submit" name="remove-from-basket" value="{{cart_items[pos].id}}"> Remove from Basket </button>
+                            </form>
+                        </div>
+
+                    </div>
+                  
+                {% endfor %}
+            {% endif %}
+        </div>
+        <div class="cart-subtotal">
+            Subtotal ({{no_cart_items}}): £{{total_price}}
+        </div>
+    </div>
+    <div class="cart-checkout">
+        <div class="cart-checkout-subtotal">
+            Subtotal ({{no_cart_items}}): £{{total_price}}
+        </div>
+        <form action="{{url_for('checkout')}}" method="post">
+            <button class="checkout" type="submit">Checkout</button>
+        </form>
+        <form method="post">
+            <button name="remove-all" type="submit" style="display: flex;">
+                remove all
+            </button>
+        </form> 
+    </div>
+</div>
+{% endblock %}

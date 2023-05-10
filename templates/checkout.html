@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block stylesheet %}
+<title>Checkout</title>
+<link rel="stylesheet" type="text/css" href="/static/css/cart.css"/>
+<script>
+    function validateCardNumber() {
+        var cardNumber = document.getElementById("card-number").value.replace(/[\s-]/g, '');
+        if (!/^\d{16}$/.test(cardNumber)) {
+            alert("Please enter a valid 16-digit card number.");
+        }
+    }
+
+    function validateExpDate() {
+        var expDate = document.getElementById("card-expdate").value;
+        if (!/^\d{2}\/\d{2}$/.test(expDate)) {
+            alert("Please enter a valid expiration date in the format MM/YY.");
+        } else {
+            var expMonth = parseInt(expDate.substr(0, 2));
+            var expYear = parseInt(expDate.substr(3));
+            var today = new Date();
+            var currMonth = today.getMonth() + 1;
+            var currYear = today.getFullYear() % 100;
+            if (expYear < currYear || (expYear == currYear && expMonth < currMonth)) {
+                alert("The expiration date has already passed.");
+            }
+        }
+    }
+</script>
+{% endblock %}
+{% block content %}
+
+<div class="checkout-grid-container">
+    <div class="checkout-address-details">
+        <h2>Current Saved Address</h2>
+        <h3>update address using the buttons above</h3>
+        <label for="address_street">Street Name:</label>
+        <div class="input">{{address[0]}}</div>
+        <label for="address_house">House Number/Name:</label>
+        <div class="input">{{address[1]}}</div>
+        <label for="address_zip">Post/ZIP code:</label>
+        <div class="input">{{address[2]}}</div>
+        <label for="address_state">State/Province:</label>
+        <div class="input">{{address[3]}}</div>
+        <label for="address_city">City:</label>
+        <div class="input">{{address[4]}}</div>
+        <label for="address_country">Country:</label>
+        <div class="input">{{address[5]}}</div>
+    </div>
+    <div class="checkout-payment">
+        <label for="card-number">Enter Debit/Credit Card details:</label>
+        <input type="text" name="card-number" id="card-number" onblur="validateCardNumber()">
+        <label for="card-name">Enter name on card:</label>
+        <input type="text" name="card-name" id="card-name">
+        <label for="card-expdate">Enter card expiration date:</label>
+        <input type="text" name="card-expdate" id="card-expdate" placeholder="MM/YY" onblur="validateExpDate()">
+    </div>
+
+    </div>
+    <div class="checkout-confirm">
+        <div class="checkout-review">
+            <!--output details given by the cart webpage:-->
+            {% for pos in range(0, no_items)%}
+                <div class="cart-indiv-item">
+                    <div class="cart-item-image">
+                        <img src="/static/images/{{cart_items[pos].image}}">
+                    </div>
+                    <div class="cart-item-wrapper">
+                        <div class="cart-title">{{cart_items[pos].name}}</div>
+                        <div class="cart-item-price">£{{cart_items[pos].price}}</div>
+                    </div>
+                    <div class="cart-item-wrapper">
+                        <div class="cart-item-deliveryTime">{{cart_items[pos].collection}} 
+                        {% if cart_items[pos].delivery_fee != 0.0 %}
+                            <span class="delivery-fee">Delivery: £{{cart_items[pos].delivery_fee}}</span>
+                        {% endif %}
+                        </div>
+                    </div>
+                </div>                  
+            {% endfor %} 
+            <form method="post">
+                <input type="hidden" name="total_price" value="{{ total_price }}">
+                <button type="submit" name="place-order">Confirm Checkout</button>
+            </form>
+            <div class="cart-subtotal">
+                Total: £{{total_price}}
+            </div>
+    </div>
+
+</div>
+
+
+{% endblock %}

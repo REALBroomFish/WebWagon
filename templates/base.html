@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>WebWagon</title>
+        {% block stylesheet %}
+        {% endblock %}
+        <link rel="stylesheet" type="text/css" href="/static/css/style.css"/>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script>
+            function showDropdownContent() {
+                document.getElementById("nav-search-dropdown-content").classList.toggle("show");
+            }
+            function hideDropdownContent() {
+                document.getElementById("nav-search-dropdown-content").classList.remove("show");
+            }
+            window.onclick = function(event) {
+                if (!event.target.matches(".dropbtn")) {
+                    var dropdowns = document.getElementsByClassName("dropdown-content");
+                    
+                    for (var i = 0; i < dropdowns.length; i++) {
+                        var openDropdown = dropdowns[i];
+                        if (openDropdown.classList.contains("show")) {
+                            openDropdown.classList.remove("show");
+                        }
+                    }
+                }
+            }
+            function updateOrder(orderBy) {
+            // Make an AJAX request to the Flask route that updates the order_by variable
+            $.ajax({
+                url: "/update_order_by",
+                type: "POST",
+                data: { order_by: orderBy },
+                success: function(response) {
+                // Replace the HTML of the search results with the updated HTML
+                $("#search-results").html(response);
+                }
+            });
+            }
+            function showAddressBox() {
+                document.querySelector('.overlay').style.display = 'block';
+                document.querySelector('.address-box').style.display = 'grid';                   
+            }
+            function hideAllBox(){
+                document.querySelector('.overlay').style.display = 'none';
+                document.querySelector('.address-box').style.display = 'none';
+                document.querySelector('.alt-address-box').style.display = 'none';
+            }
+            function showAltAddressBox(){
+                document.querySelector('.overlay').style.display = 'block';
+                document.querySelector('.alt-address-box').style.display = 'grid';  
+            }
+            function altSideBar(){
+                var sideBar = document.querySelector('.side-mobile');
+                var logo = document.querySelector('.alt-logo');
+                if (sideBar.style.display === "block"){
+                    sideBar.style.display = 'none';
+                    logo.style.position = 'static';
+                } else {
+                    sideBar.style.display = 'block';
+                    logo.style.position = 'relative';
+                }
+            }
+            function hideSideBar(){
+                var sideBar = document.querySelector('.side-mobile');
+                sideBar.style.display = 'none';
+            }
+
+        </script>
+    </head>
+    <body>
+        <div class="mobile-nav">
+            <div class="side-nav-grid">
+                <div class="side-mobile">
+                    <div class="nav-left" style="display: grid; grid-template-rows: repeat(1, 1fr); justify-content: center; width: 100%;">
+                        <div>
+                            <span class="nav-logo">
+                                <a href="{{ url_for('index') }}" style="padding: 0 0;">
+                                    <img src="/static/images/logo.png" style="width:120px; height: 60px;">
+                                    Home
+                                </a>
+                            </span>
+                        </div>
+                        <div>
+                            <button class="nav-address" onclick="showAddressBox()">
+                                Select your address
+                            </button>
+                            {% if isAddress %}
+                            <button class="nav-address" onclick="showAltAddressBox()">
+                                Current Address = {{address[2]}}
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="nav-right" style="width: 100%; justify-content: center;">
+                        <form action="{{url_for('cart')}}" method="post">
+                            <button class="nav-cart" action="{{url_for('cart')}}">
+                                <img src="/static/images/shoppingcart.png">
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <header>
+            <div class="top-nav">
+                <div class="nav-left">
+                    <span class="nav-logo">
+                        <a href="{{ url_for('index') }}" style="padding: 0 0;">
+                            <img src="/static/images/logo.png" style="width:120px; height: 60px;">
+                        </a>
+                    </span>
+                    <button class="nav-address" onclick="showAddressBox()">
+                        Select your address
+                    </button>
+                    {% if isAddress %}
+                    <button class="nav-address" onclick="showAltAddressBox()">
+                        Current Address = {{address[2]}}
+                    </button>
+                    {% endif %}
+                </div>
+                <div class="nav-fill">
+                    <div class="nav-search-bar" class="nav-search-dropdown">
+                        <button onclick="showDropdownContent()" class="nav-search-dropbutton">
+                            <img src="/static/images/search-icon.png" style="width:20px; height: 20px;">
+                        </button>
+                        <div id="nav-search-dropdown-content" class="nav-search-dropdown-content">
+                            <button class="inline-search-button" onclick="updateOrder('nameaz'); hideDropdownContent()">Name(A-Z)</button>
+                            <button class="inline-search-button" onclick="updateOrder('nameza'); hideDropdownContent()">Name(Z-A)</button>
+                            <button class="inline-search-button" onclick="updateOrder('pricelh'); hideDropdownContent()">Price(Low-High)</button>
+                            <button class="inline-search-button" onclick="updateOrder('pricehl'); hideDropdownContent()">Price(High-Low)</button>
+                            <button class="inline-search-button" onclick="updateOrder('envimplh'); hideDropdownContent()">Environmental Impact(Low-High)</button>
+                            <button class="inline-search-button" onclick="updateOrder('envimphl'); hideDropdownContent()">Environmental Impact(High-Low)</button>
+                        </div>
+                    </div>
+                    <div class="nav-search-span">
+                        <form class="nav-search-bar-form" style="display: flex;" method="POST" action="/search">
+                            <input type="text" name="search" placeholder="Search..">
+                            <button type="submit">Search</button>
+                            <input type="hidden" name="order_by" value="{{order_by}}">
+                        </form>
+                    </div>
+                </div>
+                <div class="nav-right">
+                    <form action="{{url_for('cart')}}" method="post">
+                        <button class="nav-cart" action="{{url_for('cart')}}">
+                            <img src="/static/images/shoppingcart.png">
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <div class="mobile-nav">
+                <div class="top-mobile">
+                    <div style="display: grid; grid-template-columns: 1fr;">
+                        <span class="nav-logo">
+                            <div onclick="altSideBar()" class="alt-logo" style="z-index: 1;">
+                                <img src="/static/images/logo.png" style="width:120px; height: 60px;">
+                            </div>
+                        </span>
+                    </div>
+                    <div class="nav-fill" style="z-index: 1;">
+                        <div class="nav-search-bar" class="nav-search-dropdown">
+                            <button onclick="showDropdownContent()" class="nav-search-dropbutton">
+                                <img src="/static/images/search-icon.png" style="width:20px; height: 20px;">
+                            </button>
+                            <div id="nav-search-dropdown-content" class="nav-search-dropdown-content">
+                                <button class="inline-search-button" onclick="updateOrder('nameaz'); hideDropdownContent()">Name(A-Z)</button>
+                                <button class="inline-search-button" onclick="updateOrder('nameza'); hideDropdownContent()">Name(Z-A)</button>
+                                <button class="inline-search-button" onclick="updateOrder('pricelh'); hideDropdownContent()">Price(Low-High)</button>
+                                <button class="inline-search-button" onclick="updateOrder('pricehl'); hideDropdownContent()">Price(High-Low)</button>
+                                <button class="inline-search-button" onclick="updateOrder('envimplh'); hideDropdownContent()">Environmental Impact(Low-High)</button>
+                                <button class="inline-search-button" onclick="updateOrder('envimphl'); hideDropdownContent()">Environmental Impact(High-Low)</button>
+                            </div>
+                        </div>
+                        <div class="nav-search-span">
+                            <form class="nav-search-bar-form" style="display: flex;" method="POST" action="/search">
+                                <input type="text" name="search" placeholder="Search..">
+                                <button type="submit">Search</button>
+                                <input type="hidden" name="order_by" value="{{order_by}}">
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+
+
+        <div class="overlay" onclick="hideAllBox()"></div>
+        <div class="address-box">
+            <h2>Enter your address</h2>
+            <form action="{{url_for('index')}}" method="post">
+                <label for="address_street">Street Name:</label>
+                <input type="text" id="address_street" name="address_street"><br>
+                <label for="address_house">House Number/Name:</label>
+                <input type="text" id="address_house" name="address_house"><br>
+                <label for="address_zip">Post/ZIP code:</label>
+                <input type="text" id="address_zip" name="address_zip"><br>
+                <label for="address_state">State/Province:</label>
+                <input type="text" id="address_state" name="address_state"><br>
+                <label for="address_city">City:</label>
+                <input type="text" id="address_city" name="address_city"><br>
+                <label for="address_country">Country:</label>
+                <input type="text" id="address_country" name="address_country"><br>
+                <div class="alert" style="display:none">One or more inputs are empty!</div>
+                <button type="submit" name="change-address"> Update Address </button>
+            </form>
+        </div>
+        <div class="alt-address-box">
+            <h2>Current Saved Address</h2>
+            <label for="address_street">Street Name:</label>
+            <div class="input">{{address[0]}}</div>
+            <label for="address_house">House Number/Name:</label>
+            <div class="input">{{address[1]}}</div>
+            <label for="address_zip">Post/ZIP code:</label>
+            <div class="input">{{address[2]}}</div>
+            <label for="address_state">State/Province:</label>
+            <div class="input">{{address[3]}}</div>
+            <label for="address_city">City:</label>
+            <div class="input">{{address[4]}}</div>
+            <label for="address_country">Country:</label>
+            <div class="input">{{address[5]}}</div>
+        </div>
+        {% block content %}
+        {% endblock %}
+        <div class="advert">
+            <img src="/static/images/{{advert_image}}">
+        </div>
+    </body>
+</html>
