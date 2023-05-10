@@ -35,6 +35,7 @@ def index():
             else:
                 session["cart"] = [item_id]
 
+
     item_info = Product.query.order_by(func.random()).limit(9).all()
     address = session.get("address")
     advert = adverts[random.randint(0, len(adverts)-1)]
@@ -102,11 +103,24 @@ def search():
             else:
                 session["cart"] = [item_id]
 
-    item_info = Product.query.filter(Product.name.ilike(f"%{search_query}%")).all()
+    if session["order_by"] == "nameaz":
+        order_by = Product.name.asc()
+    elif session["order_by"] == "nameza":
+        order_by = Product.name.desc()
+    elif session["order_by"] == "pricelh":
+        order_by = Product.price.asc()
+    elif session["order_by"] == "pricehl":
+        order_by = Product.price.desc()
+    elif session["order_by"] == "envimplh":
+        order_by = Product.environmental_impact.asc()
+    elif session["order_by"] == "envimphl":
+        order_by = Product.environmental_impact.desc()
+
+    item_info = Product.query.filter(Product.name.ilike(f"%{search_query}%")).order_by(order_by).all()
     additional_items = []
     if len(item_info) < 10:
         subquery = db.session.query(Product.id).filter(Product.id.in_([p.id for p in item_info]))
-        additional_items = Product.query.filter(~Product.id.in_(subquery)).order_by(func.random()).limit(10-len(item_info)).all()        
+        additional_items = Product.query.filter(~Product.id.in_(subquery)).order_by(order_by).limit(10-len(item_info)).all()        
         not_enough_items = [True, len(item_info)]
     else:
         not_enough_items = [False, 0]
